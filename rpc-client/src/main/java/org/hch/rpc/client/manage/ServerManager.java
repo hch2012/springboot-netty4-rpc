@@ -1,0 +1,74 @@
+package org.hch.rpc.client.manage;
+
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import org.hch.rpc.client.discover.ServiceDiscover;
+import org.hch.rpc.client.route.ServiceRouter;
+import org.hch.rpc.common.protocol.marshalling.Marshalling;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+/**
+ * Created by chenghao on 9/8/16.
+ */
+public class ServerManager {
+    public ConcurrentMap<String,List<Server>> serviceMap=new ConcurrentHashMap<>();
+
+    private ServiceDiscover serviceDiscover;
+    private EventLoopGroup eventLoopGroup;
+    private ServiceRouter serviceRouter;
+    private Marshalling marshalling;
+
+    public ServerManager(ServiceDiscover serviceDiscover, ServiceRouter serviceRouter, Marshalling marshalling){
+        this.serviceDiscover=serviceDiscover;
+        this.serviceRouter = serviceRouter;
+        this.marshalling=marshalling;
+    }
+
+    public void init(){
+        eventLoopGroup=new NioEventLoopGroup();
+        Map<String,Map<String,String>> map=serviceDiscover.discover();
+        for(String key:map.keySet()){
+            Map<String,String> tmp=map.get(key);
+            List<Server> tmpList=new ArrayList<>();
+            for(String itemKey:tmp.keySet())
+                tmpList.add(new Server(key,itemKey,tmp.get(itemKey),eventLoopGroup,marshalling));
+            serviceMap.put(key,tmpList);
+        }
+        serviceDiscover
+                .bindAddHandler((type,name,url)->{
+            serviceMap.putIfAbsent(type,new ArrayList<>());
+            Server server =new Server(type,name,url,eventLoopGroup,marshalling);
+            List list=serviceMap.get(type);
+            synchronized (list){
+                list.add(server);
+            }
+        })
+                .bindRemoveHandler((type,name,url)->{
+            serviceMap.putIfAbsent(type,new ArrayList<>());
+            List<Server> list=serviceMap.get(type);
+            synchronized (list){
+                for(int i=list.size()-1;i>=0;i--){
+                    if(list.get(i).getName().equals(name)){
+                        list.remove(i);
+                        break;
+                    }
+                }
+            }
+        }).watchService();
+    }
+
+
+    public Server getService(String type){
+        List<Server> list=serviceMap.get(type);
+        synchronized (list){
+            return serviceRouter.route(list);
+        }
+    }
+
+
+}

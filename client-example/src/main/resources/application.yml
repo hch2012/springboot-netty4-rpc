@@ -1,0 +1,7 @@
+zookeeper:
+  connectString: localhost:2181,localhost:2182,localhost:2183
+
+application.info:
+  registerPath: /servers/node
+  appName: payServer
+  hostUrl: localhost:8080
