@@ -3,5 +3,5 @@ zookeeper:
 
 application.info:
   registerPath: /servers/node
-  appName: hello
+  appName: test
   hostUrl: localhost:8080

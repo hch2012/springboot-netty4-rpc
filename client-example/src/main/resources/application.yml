@@ -3,5 +3,3 @@ zookeeper:
 
 application.info:
   registerPath: /servers/node
-  appName: payServer
-  hostUrl: localhost:8080

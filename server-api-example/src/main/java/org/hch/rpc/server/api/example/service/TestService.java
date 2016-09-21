@@ -6,6 +6,6 @@ import org.hch.rpc.common.annotation.RpcServiceApiDescription;
  * Created by chenghao on 9/8/16.
  */
 @RpcServiceApiDescription(group = "test")
-public interface HelloService {
-    String hello();
+public interface TestService {
+    String test();
 }

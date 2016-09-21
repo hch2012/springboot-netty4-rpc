@@ -2,7 +2,7 @@ package org.hch.rpc.client.proxy;
 
 import org.hch.rpc.client.manage.Server;
 import org.hch.rpc.client.manage.ServerManager;
-import org.hch.rpc.common.annotation.RpcServiceApi;
+import org.hch.rpc.common.annotation.RpcServiceApiDescription;
 import org.hch.rpc.common.protocol.Request;
 import org.hch.rpc.common.protocol.Response;
 
@@ -27,7 +27,7 @@ public class ServiceProxy implements InvocationHandler{
         request.setParamsType(method.getParameterTypes());
         request.setParams(args);
         request.setRequestId(UUID.randomUUID().toString());
-        Server server = serverManager.getService(method.getDeclaringClass().getDeclaredAnnotation(RpcServiceApi.class).type());
+        Server server = serverManager.getService(method.getDeclaringClass().getDeclaredAnnotation(RpcServiceApiDescription.class).group());
         CompletableFuture<Response> future= server.sendRequest(request);
         Response response=future.get();
         System.out.println(request);

@@ -8,8 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "application.info")
 public class ApplicationProperties {
-
-
     private String registerPath;
     private String appName;
     private String hostUrl;

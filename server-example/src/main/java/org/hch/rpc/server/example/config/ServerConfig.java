@@ -1,6 +1,7 @@
 package org.hch.rpc.server.example.config;
 
 import org.hch.rpc.server.api.example.service.HelloService;
+import org.hch.rpc.server.api.example.service.TestService;
 import org.hch.rpc.server.map.ServiceMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,10 +13,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ServerConfig {
 
-    @Bean()
-    public ServiceMap serviceMap(HelloService helloService){
+    @Bean
+    public ServiceMap serviceMap(HelloService helloService,TestService testService){
         ServiceMap serviceMap=new ServiceMap();
         serviceMap.addService(HelloService.class.getName(),helloService);
+        serviceMap.addService(TestService.class.getName(),testService);
         return serviceMap;
     }
 
