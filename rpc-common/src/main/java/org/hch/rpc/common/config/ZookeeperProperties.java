@@ -2,12 +2,14 @@ package org.hch.rpc.common.config;
 
 import com.sun.istack.internal.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by chenghao on 9/7/16.
  */
+@ConfigurationPropertiesBinding
 @ConfigurationProperties(prefix = "zookeeper")
 public class ZookeeperProperties {
     @NotNull

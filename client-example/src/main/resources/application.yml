@@ -3,3 +3,5 @@ zookeeper:
 
 application.info:
   registerPath: /servers/node
+server:
+  port: 8091

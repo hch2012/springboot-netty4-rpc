@@ -1,13 +1,15 @@
 package org.hch.rpc.client.discover;
 
 import org.hch.rpc.client.manage.Handler;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Map;
 
 /**
  * Created by chenghao on 9/8/16.
  */
-public interface ServiceDiscover {
+public interface ServiceDiscover extends ApplicationListener<ContextRefreshedEvent> {
     /**
      *
      * @return  Map&lt;serverType,Map&lt;serverName,serverHost&gt;&gt;

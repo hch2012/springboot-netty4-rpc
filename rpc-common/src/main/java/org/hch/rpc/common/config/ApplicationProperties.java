@@ -1,11 +1,13 @@
 package org.hch.rpc.common.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 
 /**
  * Created by chenghao on 9/7/16.
  */
 
+@ConfigurationPropertiesBinding
 @ConfigurationProperties(prefix = "application.info")
 public class ApplicationProperties {
     private String registerPath;

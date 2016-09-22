@@ -82,14 +82,16 @@ public class Server {
 
         ChannelFuture channelFuture = b.connect(new InetSocketAddress(host,port));
         try {
+            CompletableFuture<Channel> future=new CompletableFuture();
             channelFuture.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(final ChannelFuture channelFuture) throws Exception {
                     if (channelFuture.isSuccess()) {
-                        channel=channelFuture.channel();
+                        future.complete(channelFuture.channel());
                     }
                 }
-            }).sync().get();
+            });
+            this.channel=future.get();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,10 +5,10 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.hch.rpc.client.manage.Handler;
 import org.hch.rpc.common.config.ApplicationProperties;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -39,12 +39,12 @@ public class ZookeeperServiceDiscover implements ServiceDiscover {
 
     public void init() throws Exception {
         map=new ConcurrentHashMap<>();
-        List<String> pathList=curatorFramework.getChildren().forPath(applicationProperties.getRegisterPath());
-        for (String path:pathList){
-            String type=getType(path);
-            String data=new String(curatorFramework.getData().forPath(applicationProperties.getFullPath(path)));
-            addToMap(type,path,data);
-        }
+        //List<String> pathList=curatorFramework.getChildren().forPath(applicationProperties.getRegisterPath());
+//        for (String path:pathList){
+//            String type=getType(path);
+//            String data=new String(curatorFramework.getData().forPath(applicationProperties.getFullPath(path)));
+//            addToMap(type,path,data);
+//        }
     }
     @Override
     public void watchService() {
@@ -61,19 +61,28 @@ public class ZookeeperServiceDiscover implements ServiceDiscover {
                     break;
             }
         });
+        try {
+            cache.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void dealAdd(PathChildrenCacheEvent event) {
-        String type=getType(event.getData().getPath());
-        addToMap(type,event.getData().getPath(),new String(event.getData().getData()));
+        String[] paths=event.getData().getPath().split("/");
+        String path=paths[paths.length-1];
+        String type=getType(path);
+        addToMap(type,path,new String(event.getData().getData()));
         if(addHandler!=null)
-            addHandler.handle(type,event.getData().getPath(),new String(event.getData().getData()));
+            addHandler.handle(type,path,new String(event.getData().getData()));
     }
     private void dealRemove(PathChildrenCacheEvent event) {
-        String type=getType(event.getData().getPath());
-        removeFromMap(type,event.getData().getPath());
+        String[] paths=event.getData().getPath().split("/");
+        String path=paths[paths.length-1];
+        String type=getType(path);
+        removeFromMap(type,path);
         if(removeHandler!=null)
-            removeHandler.handle(getType(event.getData().getPath()),event.getData().getPath(),new String(event.getData().getData()));
+            removeHandler.handle(type,path,new String(event.getData().getData()));
     }
     private void addToMap(String type,String name,String url){
         map.putIfAbsent(type,new ConcurrentHashMap<>());
@@ -102,4 +111,12 @@ public class ZookeeperServiceDiscover implements ServiceDiscover {
         return name.substring(0,index);
     }
 
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        try {
+            init();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

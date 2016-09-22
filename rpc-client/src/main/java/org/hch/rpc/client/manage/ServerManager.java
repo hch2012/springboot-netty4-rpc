@@ -3,8 +3,11 @@ package org.hch.rpc.client.manage;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.hch.rpc.client.discover.ServiceDiscover;
+import org.hch.rpc.client.exception.NoSupportServiceException;
 import org.hch.rpc.client.route.ServiceRouter;
 import org.hch.rpc.common.protocol.marshalling.Marshalling;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Created by chenghao on 9/8/16.
  */
-public class ServerManager {
+public class ServerManager implements ApplicationListener<ContextRefreshedEvent> {
     public ConcurrentMap<String,List<Server>> serviceMap=new ConcurrentHashMap<>();
 
     private ServiceDiscover serviceDiscover;
@@ -65,10 +68,16 @@ public class ServerManager {
 
     public Server getService(String type){
         List<Server> list=serviceMap.get(type);
+        if(list==null || list.isEmpty())
+            throw new NoSupportServiceException(type);
         synchronized (list){
             return serviceRouter.route(list);
         }
     }
 
 
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        init();
+    }
 }
