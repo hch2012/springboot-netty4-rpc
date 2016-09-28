@@ -10,6 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>client-example</artifactId>
+    <properties>
+        <start-class>org.hch.rpc.client.example.ClientApplication</start-class>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.hch.rpc</groupId>
@@ -27,4 +30,12 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -10,6 +10,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>server-example</artifactId>
+    <properties>
+        <start-class>org.hch.rpc.server.example.ServerApplication</start-class>
+    </properties>
     <dependencies>
 
         <dependency>
@@ -23,6 +26,15 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

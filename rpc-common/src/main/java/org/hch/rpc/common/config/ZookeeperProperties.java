@@ -1,6 +1,5 @@
 package org.hch.rpc.common.config;
 
-import com.sun.istack.internal.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 
@@ -12,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 @ConfigurationPropertiesBinding
 @ConfigurationProperties(prefix = "zookeeper")
 public class ZookeeperProperties {
-    @NotNull
     private String connectString = "localhost:2181";
 
     private boolean enabled = true;
